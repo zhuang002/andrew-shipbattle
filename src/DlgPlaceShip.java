@@ -38,6 +38,7 @@ public class DlgPlaceShip extends JDialog {
 	 */
 	public DlgPlaceShip() {
 		
+		
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -189,9 +190,10 @@ public class DlgPlaceShip extends JDialog {
 				try {
 					BattleShipLogic.getInstance().setShipPlacements(ships);
 					DlgPlaceShip.this.show(false);
-				} catch (InvalidShipPlacementException expt) {
-					
+				} catch (InvalidShipPlacementException excp) {
+					// do sth here.
 				}
+				
 				
 				
 			}

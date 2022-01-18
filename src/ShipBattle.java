@@ -14,12 +14,17 @@ import javax.swing.border.LineBorder;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.awt.event.ActionEvent;
 
-public class ShipBattle {
+public class ShipBattle implements BattleShipController {
 
 	private JFrame frame;
-	private JTextField textFieldHitStatus;
+	BattleField myField;
+	BattleField rivalField;
+	GuiState state = GuiState.setting;
+	JButton btnReset = null;
+	JButton btnToss = null;
 
 	/**
 	 * Launch the application.
@@ -55,47 +60,30 @@ public class ShipBattle {
 		JPanel panelAction = new JPanel();
 		frame.getContentPane().add(panelAction, BorderLayout.NORTH);
 		
-		BattleShipLogic battleShipLogic = BattleShipLogic.getInstance();
-		
-		
-		
-		JPanel panel = new JPanel();
-		frame.getContentPane().add(panel, BorderLayout.WEST);
-		panel.setLayout(new BorderLayout(0, 0));
-		
-		JLabel lblTurn = new JLabel("Not Started");
-		panel.add(lblTurn, BorderLayout.NORTH);
-		
-		textFieldHitStatus = new JTextField();
-		panel.add(textFieldHitStatus, BorderLayout.CENTER);
-		textFieldHitStatus.setColumns(10);
+		BattleShipLogic battleShipLogic = BattleShipLogic.getInstance(this);
 		
 		JPanel panelBattleField = new JPanel();
 		frame.getContentPane().add(panelBattleField, BorderLayout.CENTER);
-		panelBattleField.setLayout(new GridLayout(10, 10, 0, 0));
+		panelBattleField.setLayout(new GridLayout(0, 2, 0, 0));
 		
-		for (int x=0;x<10;x++) {
-			for (int y=0;y<10;y++) {
-				GridButton btn = new GridButton(x,y);
-				panelBattleField.add(btn);
-				
-			}
-		}
+		myField = new BattleField();
+		myField.setEnabled(false);
+		rivalField = new BattleField();
+		rivalField.setEnabled(false);
+		panelBattleField.add(myField);
+		panelBattleField.add(rivalField);
 		
 		
-		JButton btnReset = new JButton("Reset");
-		JButton btnToss = new JButton("Toss");
-		JButton btnFire = new JButton("Fire");
+		
+		
+		btnReset = new JButton("Reset");
+		btnToss = new JButton("Toss");
 		panelAction.add(btnReset);
 		panelAction.add(btnToss);
-		panelAction.add(btnFire);
 		
 		btnReset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				placeShips();
-				lblTurn.setText("Wait for Toss");
-				btnToss.setEnabled(true);
-				btnFire.setEnabled(false);
 				displayStatus(null);
 			}
 
@@ -109,21 +97,7 @@ public class ShipBattle {
 		btnToss.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnToss.setEnabled(false);
-				int toss = battleShipLogic.toss();
-				if (toss==0) {
-					HitStatus hitStatus= battleShipLogic.computerPlay();
-					displayStatus(hitStatus);
-					btnFire.setEnabled(true);
-				} else {
-					
-				}
-			}
-		});
-		
-		
-		
-		btnFire.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+				battleShipLogic.toss();
 			}
 		});
 		
@@ -138,6 +112,53 @@ public class ShipBattle {
 		// TODO Auto-generated method stub
 		DlgPlaceShip dialog = new DlgPlaceShip();
 		dialog.show(true);
+		
+	}
+
+
+	private void setState(GuiState state) {
+		// TODO Auto-generated method stub
+		if (state == GuiState.setting) {
+			btnReset.setEnabled(true);
+			btnToss.setEnabled(false);
+			rivalField.setEnabled(false);
+		} else if (state == GuiState.toss) {
+			btnReset.setEnabled(false);
+			btnToss.setEnabled(true);
+			rivalField.setEnabled(false);
+		} else if (state == GuiState.finish) {
+			btnReset.setEnabled(true);
+			btnToss.setEnabled(false);
+			rivalField.setEnabled(false);
+		} else if (state == GuiState.play) {
+			btnReset.setEnabled(false);
+			btnToss.setEnabled(false);
+			rivalField.setEnabled(true);
+		}
+	}
+
+
+	@Override
+	public void updateMyField(GridStatus[][] gridData) {
+		// TODO Auto-generated method stub
+		myField.displayGrid(gridData);
+	}
+
+	@Override
+	public void updateRivalField(GridStatus[][] gridData) {
+		// TODO Auto-generated method stub
+		rivalField.displayGrid(gridData);
+	}
+
+	@Override
+	public void gameFinished(int who) {
+		// TODO Auto-generated method stub
+		if (who == 0) {
+			JOptionPane.showMessageDialog(frame, "You Win!");
+		} else {
+			JOptionPane.showMessageDialog(frame, "I Win!");
+		}
+		this.setState(GuiState.finish);
 	}
 
 }
