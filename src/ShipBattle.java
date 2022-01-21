@@ -16,6 +16,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.awt.event.ActionEvent;
+import javax.swing.border.EmptyBorder;
 
 public class ShipBattle implements BattleShipController {
 
@@ -54,7 +55,8 @@ public class ShipBattle implements BattleShipController {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 900, 600);
+		BorderLayout borderLayout = (BorderLayout) frame.getContentPane().getLayout();
+		frame.setBounds(100, 100, 900, 500);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JPanel panelAction = new JPanel();
@@ -63,8 +65,9 @@ public class ShipBattle implements BattleShipController {
 		BattleShipLogic battleShipLogic = BattleShipLogic.getInstance(this);
 		
 		JPanel panelBattleField = new JPanel();
+		panelBattleField.setBorder(new EmptyBorder(20, 40, 40, 40));
 		frame.getContentPane().add(panelBattleField, BorderLayout.CENTER);
-		panelBattleField.setLayout(new GridLayout(0, 2, 0, 0));
+		panelBattleField.setLayout(new GridLayout(0, 2, 20, 20));
 		
 		myField = new BattleField();
 		myField.setEnabled(false);
@@ -88,7 +91,7 @@ public class ShipBattle implements BattleShipController {
 				placeShips();
 				try {
 					backend.placeRivalShips();
-					displayStatus(null);
+
 				} catch (InvalidShipPlacementException expt) {
 					JOptionPane.showMessageDialog(frame, "Stupid AI!");
 				}
@@ -102,15 +105,13 @@ public class ShipBattle implements BattleShipController {
 			public void actionPerformed(ActionEvent e) {
 				btnToss.setEnabled(false);
 				battleShipLogic.toss(); 
+				setState(GuiState.play);
 			}
 		});
 		
+		setState(GuiState.setting);
 	}
 	
-	private void displayStatus(HitStatus hitStatus) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	private void placeShips() {
 		// TODO Auto-generated method stub
@@ -120,7 +121,7 @@ public class ShipBattle implements BattleShipController {
 	}
 
 
-	private void setState(GuiState state) {
+	public void setState(GuiState state) {
 		// TODO Auto-generated method stub
 		if (state == GuiState.setting) {
 			btnReset.setEnabled(true);
@@ -145,13 +146,13 @@ public class ShipBattle implements BattleShipController {
 	@Override
 	public void updateMyField(GridStatus[][] gridData) {
 		// TODO Auto-generated method stub
-		myField.displayGrid(gridData);
+		myField.displayGrid(gridData, true);
 	}
 
 	@Override
 	public void updateRivalField(GridStatus[][] gridData) {
 		// TODO Auto-generated method stub
-		rivalField.displayGrid(gridData);
+		rivalField.displayGrid(gridData, false);
 	}
 
 	@Override

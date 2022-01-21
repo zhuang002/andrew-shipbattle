@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.DefaultComboBoxModel;
@@ -167,31 +168,32 @@ public class DlgPlaceShip extends JDialog {
 		btnApply.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ArrayList<ShipPlacement> ships = new ArrayList<>();
-				ShipPlacement ship = new ShipPlacement("Carrier", Integer.parseInt(textFieldCarrierX.getText())-1,
+				ShipPlacement ship = new ShipPlacement(ShipTypes.Carrier, Integer.parseInt(textFieldCarrierX.getText())-1,
 						Integer.parseInt(textFieldCarrierY.getText())-1, (Orientation)comboBoxCarrierOrientation.getSelectedItem());
 				ships.add(ship);
 				
-				ship = new ShipPlacement("BattleShip", Integer.parseInt(textFieldBattleshipX.getText())-1,
+				ship = new ShipPlacement(ShipTypes.BattleShip, Integer.parseInt(textFieldBattleshipX.getText())-1,
 						Integer.parseInt(textFieldBattleshipY.getText())-1, (Orientation)comboBoxBattleshipOrientation.getSelectedItem());
 				ships.add(ship);
 				
-				ship = new ShipPlacement("Cruiser", Integer.parseInt(textFieldCruiserX.getText())-1,
+				ship = new ShipPlacement(ShipTypes.Cruiser, Integer.parseInt(textFieldCruiserX.getText())-1,
 						Integer.parseInt(textFieldCruiserY.getText())-1, (Orientation)comboBoxCruiserOrientation.getSelectedItem());
 				ships.add(ship);
 				
-				ship = new ShipPlacement("Submarine", Integer.parseInt(textFieldSubmarineX.getText())-1,
+				ship = new ShipPlacement(ShipTypes.Submarine, Integer.parseInt(textFieldSubmarineX.getText())-1,
 						Integer.parseInt(textFieldSubmarineY.getText())-1, (Orientation)comboBoxSubmarineOrientation.getSelectedItem());
 				ships.add(ship);
 				
-				ship = new ShipPlacement("Destroyer", Integer.parseInt(textFieldDestroyerX.getText())-1,
+				ship = new ShipPlacement(ShipTypes.Destroyer, Integer.parseInt(textFieldDestroyerX.getText())-1,
 						Integer.parseInt(textFieldDestroyerY.getText())-1, (Orientation)comboBoxDestroyerOrientation.getSelectedItem());
 				ships.add(ship);
 				
 				try {
 					BattleShipLogic.getInstance().setShipPlacements(ships);
 					DlgPlaceShip.this.show(false);
+					BattleShipLogic.getInstance().getGuiController().setState(GuiState.toss);
 				} catch (InvalidShipPlacementException excp) {
-					// do sth here.
+					JOptionPane.showMessageDialog(DlgPlaceShip.this, "Invalid Ship Placement");
 				}
 				
 				
