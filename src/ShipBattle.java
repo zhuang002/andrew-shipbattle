@@ -83,12 +83,16 @@ public class ShipBattle implements BattleShipController {
 		
 		btnReset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				BattleShipLogic backend = BattleShipLogic.getInstance();
+				backend.reset();
 				placeShips();
-				displayStatus(null);
+				try {
+					backend.placeRivalShips();
+					displayStatus(null);
+				} catch (InvalidShipPlacementException expt) {
+					JOptionPane.showMessageDialog(frame, "Stupid AI!");
+				}
 			}
-
-			
-
 			
 		});
 		
@@ -97,7 +101,7 @@ public class ShipBattle implements BattleShipController {
 		btnToss.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnToss.setEnabled(false);
-				battleShipLogic.toss();
+				battleShipLogic.toss(); 
 			}
 		});
 		
